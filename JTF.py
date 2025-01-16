@@ -1,11 +1,17 @@
+# Version:1.1
+# Author:Brucekomike
+# last update 2025-1-16
 import os
 import argparse
 import shutil
 import sys
+
+# init argparse
 JTF = argparse.ArgumentParser(description="Dump Minecraft Assets Files")
 JTF.add_argument('version',type=str,help="choose minecraft a version.",metavar='Version',default='list_subete',nargs='?')
 JTF.add_argument('-l','--list',help="list all avaliable version",action='store_true',dest='list')
 JTF.add_argument('-d','--dir',type=str,help='set the .minecraft directory manually. By default use default directory.',default='false',metavar='<dir>',dest='mc_dir')
+# split the json file list to an python list object
 def split_to_list(json_dir):
    with open(str(json_dir)) as f:
       data = f.read()
@@ -17,6 +23,7 @@ def split_to_list(json_dir):
       a = a +1
    return json_list
 
+# recrusive get the contents
 def list_to_line(line,type):
    run = 0
    tri = 1
@@ -46,19 +53,21 @@ def list_to_line(line,type):
    if type == '2':
       return json_dump_path
 
+# build the list for file copying
 def mkdup2(list):
-   list_dup = [] 
+   list_dup = []
    for line in list:
       e = line[0:2]
       list_dup.append('objects' + '/' + e + '/' + line)
    print('step1 complete')
    return(list_dup)
 
+# copy files
 def dup2(path,dup,mcpath,version):
    t = path
    y = dup
    a = 0
-   for line in t:   
+   for line in t:
       try:
          os.makedirs('assets' + version + '/' + y[a])
          os.rmdir('assets' + version + '/' + y[a])
@@ -78,7 +87,9 @@ def dup2(path,dup,mcpath,version):
          i.close
    print('step2 complete')
 
+# main from here
 args = JTF.parse_args()
+#default minecraft installation
 ntdir = str('/AppData/Roaming/.minecraft')
 homedir = str(os.path.expanduser('~'))
 if os.name == 'nt':
@@ -93,7 +104,7 @@ if args.mc_dir != 'false':
 indexes_dir = mcdir + '/assets/indexes/' + args.version  + '.json'
 print(indexes_dir)
 if args.list == True:
-   print('list of all avaliable version') 
+   print('list of all avaliable version')
    for f in os.listdir(mcdir + '/assets/indexes/'):
       print(f.rstrip('.json'),end=",  ")
    sys.exit(0)
